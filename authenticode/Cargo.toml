@@ -1,0 +1,30 @@
+# Copyright 2023 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+# <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
+# option. This file may not be copied, modified, or distributed
+# except according to those terms.
+
+[package]
+name = "authenticode"
+edition.workspace = true
+license.workspace = true
+version.workspace = true
+
+[features]
+std = []
+
+[dependencies]
+cms = "0.2.0"
+const-oid = "0.9.0"
+der = { version = "0.7.0", features = ["derive"] }
+digest = "0.10.0"
+log = "0.4.0"
+memoffset = "0.9"
+object = { version = "0.30.0", default-features = false, features = ["pe", "read_core"] }
+rsa = { version = "0.9.0", default-features = false }
+sha1 = { version = "0.10.0", default-features = false, features = ["force-soft", "oid"] }
+sha2 = { version = "0.10.0", default-features = false, features = ["force-soft", "oid"] }
+spki = "0.7.2"
+x509-cert = { version = "0.2.0", default-features = false }
