@@ -17,6 +17,15 @@ on:
 name: CI
 
 jobs:
+  msrv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: cp .github/workflows/msrv_toolchain.toml rust-toolchain.toml
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo check
+      - run: cargo test
+
   check:
     runs-on: ubuntu-latest
     steps:
