@@ -1,5 +1,8 @@
 # authenticode
 
+[![Crates.io](https://img.shields.io/crates/v/authenticode)](https://crates.io/crates/authenticode)
+[![Docs.rs](https://docs.rs/authenticode/badge.svg)](https://docs.rs/authenticode)
+
 This is a no-std library for working with authenticode data as defined
 in the [PE format].
 

@@ -1,5 +1,7 @@
 # authenticode-tool
 
+[![Crates.io](https://img.shields.io/crates/v/authenticode-tool)](https://crates.io/crates/authenticode-tool)
+
 This is a command-line utility for working with authenticode data as
 defined in the [PE format].
 

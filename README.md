@@ -3,7 +3,9 @@
 This repo contains tools for working with authenticode signatures as
 defined in the [PE format]. There are two Rust packages:
 * [`authenticode`] - A no-std library for working with authenticode.
+  * [![Crates.io](https://img.shields.io/crates/v/authenticode)](https://crates.io/crates/authenticode) [![Docs.rs](https://docs.rs/authenticode/badge.svg)](https://docs.rs/authenticode)
 * [`authenticode-tool`] - A command-line utility for viewing authenticode data.
+  * [![Crates.io](https://img.shields.io/crates/v/authenticode-tool)](https://crates.io/crates/authenticode-tool)
 
 ## License
 
