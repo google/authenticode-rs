@@ -1,5 +1,7 @@
 # authenticode-rs
 
+[![codecov.io](https://codecov.io/gh/google/authenticode-rs/coverage.svg?branch=main)](https://codecov.io/gh/google/authenticode-rs)
+
 This repo contains tools for working with authenticode signatures as
 defined in the [PE format]. There are two Rust packages:
 * [`authenticode`] - A no-std library for working with authenticode.
