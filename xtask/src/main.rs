@@ -9,7 +9,7 @@
 use clap::{Parser, Subcommand};
 use command_run::Command;
 use fs_err as fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use tempfile::TempDir;
 
 #[derive(Parser)]
@@ -71,7 +71,22 @@ fn generate_keys(paths: &Paths) {
     .unwrap();
 }
 
+fn build_exe(root_path: &Path, target: &str) {
+    Command::with_args(
+        "cargo",
+        ["build", "--release", "--target", target, "--manifest-path"],
+    )
+    .add_arg(root_path.join("Cargo.toml"))
+    .run()
+    .unwrap();
+}
+
 fn generate_tiny_pe_exe(paths: &Paths) {
+    if paths.unsigned_exe().exists() && paths.signed_exe().exists() {
+        println!("skipping exe generation");
+        return;
+    }
+
     let tmp_dir = TempDir::new().unwrap();
     let tmp_path = tmp_dir.path();
 
@@ -87,23 +102,15 @@ fn generate_tiny_pe_exe(paths: &Paths) {
     .unwrap();
 
     // Build it.
-    Command::with_args(
-        "cargo",
-        [
-            "build",
-            "--release",
-            "--target",
-            "x86_64-unknown-uefi",
-            "--manifest-path",
-        ],
-    )
-    .add_arg(tmp_path.join("Cargo.toml"))
-    .run()
-    .unwrap();
+    let target = "x86_64-unknown-uefi";
+    build_exe(tmp_path, target);
 
     // Copy it to the test data directory.
     fs::copy(
-        tmp_path.join("target/x86_64-unknown-uefi/release/tiny.efi"),
+        tmp_path
+            .join("target")
+            .join(target)
+            .join("release/tiny.efi"),
         paths.unsigned_exe(),
     )
     .unwrap();
