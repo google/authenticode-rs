@@ -21,15 +21,15 @@ version.workspace = true
 std = []
 
 [dependencies]
-cms = "0.2.0"
-const-oid = "0.9.0"
-der = { version = "0.7.0", features = ["derive"] }
-digest = "0.10.0"
-log = "0.4.0"
-memoffset = "0.9"
+cms = { version = "0.2.0", default-features = false }
+const-oid = { version = "0.9.0", default-features = false }
+der = { version = "0.7.0", default-features = false, features = ["derive"] }
+digest = { version = "0.10.0", default-features = false }
+log = { version = "0.4.0", default-features = false }
+memoffset = { version = "0.9", default-features = false }
 object = { version = "0.30.0", default-features = false, features = ["pe", "read_core"] }
 rsa = { version = "0.9.0", default-features = false }
-sha1 = { version = "0.10.0", default-features = false, features = ["force-soft", "oid"] }
-sha2 = { version = "0.10.0", default-features = false, features = ["force-soft", "oid"] }
-spki = "0.7.2"
+sha1 = { version = "0.10.0", default-features = false, features = ["oid"] }
+sha2 = { version = "0.10.0", default-features = false, features = ["oid"] }
+spki = { version = "0.7.0", default-features = false }
 x509-cert = { version = "0.2.0", default-features = false }

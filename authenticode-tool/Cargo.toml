@@ -19,11 +19,11 @@ version.workspace = true
 
 [dependencies]
 anyhow = "1.0.71"
-authenticode = { path = "../authenticode", features = ["std"] }
+authenticode = { path = "../authenticode", version = "0.1.0", features = ["std"] }
 clap = { version = "4.0.0", features = ["derive"] }
-cms = "0.2.0"
-der = { version = "0.7.0", features = ["std"] }
-digest = "0.10.0"
+cms = { version = "0.2.0", default-features = false }
+der = { version = "0.7.0", default-features = false, features = ["std"] }
+digest = { version = "0.10.0", default-features = false }
 object = { version = "0.30.0", default-features = false, features = ["pe", "read_core", "std"] }
 sha1 = { version = "0.10.0", default-features = false }
 sha2 = { version = "0.10.0", default-features = false }
