@@ -33,7 +33,7 @@ pub enum AttributeCertificateError {
     /// The certificate table's range is out of bounds.
     OutOfBounds,
 
-    /// The certiticate table's size does not match the sum of the
+    /// The certificate table's size does not match the sum of the
     /// certificate entry's aligned sizes.
     InvalidSize,
 }
