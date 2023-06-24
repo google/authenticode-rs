@@ -8,6 +8,10 @@
 
 [package]
 name = "authenticode-tool"
+categories = ["command-line-utilities"]
+description = "Authenticode command-line tool"
+keywords = ["authenticode", "cli"]
+
 edition.workspace = true
 license.workspace = true
 version.workspace = true
