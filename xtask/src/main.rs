@@ -23,6 +23,28 @@ enum Action {
     GenerateTestData,
 }
 
+#[derive(Clone, Copy)]
+enum Bitness {
+    B32,
+    B64,
+}
+
+impl Bitness {
+    fn as_num(self) -> u8 {
+        match self {
+            Bitness::B32 => 32,
+            Bitness::B64 => 64,
+        }
+    }
+
+    fn target(self) -> &'static str {
+        match self {
+            Bitness::B32 => "i686-unknown-uefi",
+            Bitness::B64 => "x86_64-unknown-uefi",
+        }
+    }
+}
+
 struct Paths {
     test_data: PathBuf,
 }
@@ -34,12 +56,13 @@ impl Paths {
         }
     }
 
-    fn unsigned_exe(&self) -> PathBuf {
-        self.test_data.join("tiny.efi")
+    fn unsigned_exe(&self, bitness: Bitness) -> PathBuf {
+        self.test_data.join(format!("tiny{}.efi", bitness.as_num()))
     }
 
-    fn signed_exe(&self) -> PathBuf {
-        self.test_data.join("tiny.signed.efi")
+    fn signed_exe(&self, bitness: Bitness) -> PathBuf {
+        self.test_data
+            .join(format!("tiny{}.signed.efi", bitness.as_num()))
     }
 
     fn private_pem(&self) -> PathBuf {
@@ -71,19 +94,27 @@ fn generate_keys(paths: &Paths) {
     .unwrap();
 }
 
-fn build_exe(root_path: &Path, target: &str) {
+fn build_exe(root_path: &Path, bitness: Bitness) {
     Command::with_args(
         "cargo",
-        ["build", "--release", "--target", target, "--manifest-path"],
+        [
+            "build",
+            "--release",
+            "--target",
+            bitness.target(),
+            "--manifest-path",
+        ],
     )
     .add_arg(root_path.join("Cargo.toml"))
     .run()
     .unwrap();
 }
 
-fn generate_tiny_pe_exe(paths: &Paths) {
-    if paths.unsigned_exe().exists() && paths.signed_exe().exists() {
-        println!("skipping exe generation");
+fn generate_tiny_pe_exe(paths: &Paths, bitness: Bitness) {
+    if paths.unsigned_exe(bitness).exists()
+        && paths.signed_exe(bitness).exists()
+    {
+        println!("skipping exe-{} generation", bitness.as_num());
         return;
     }
 
@@ -102,16 +133,15 @@ fn generate_tiny_pe_exe(paths: &Paths) {
     .unwrap();
 
     // Build it.
-    let target = "x86_64-unknown-uefi";
-    build_exe(tmp_path, target);
+    build_exe(tmp_path, bitness);
 
-    // Copy it to the test data directory.
+    // Copy to the test data directory.
     fs::copy(
         tmp_path
             .join("target")
-            .join(target)
+            .join(bitness.target())
             .join("release/tiny.efi"),
-        paths.unsigned_exe(),
+        paths.unsigned_exe(bitness),
     )
     .unwrap();
 
@@ -119,8 +149,8 @@ fn generate_tiny_pe_exe(paths: &Paths) {
     Command::new("sbsign")
         .add_arg_pair("--cert", paths.public_pem())
         .add_arg_pair("--key", paths.private_pem())
-        .add_arg_pair("--output", paths.signed_exe())
-        .add_arg(paths.unsigned_exe())
+        .add_arg_pair("--output", paths.signed_exe(bitness))
+        .add_arg(paths.unsigned_exe(bitness))
         .run()
         .unwrap();
 }
@@ -128,7 +158,8 @@ fn generate_tiny_pe_exe(paths: &Paths) {
 fn generate_test_data() {
     let paths = Paths::new();
     generate_keys(&paths);
-    generate_tiny_pe_exe(&paths);
+    generate_tiny_pe_exe(&paths, Bitness::B32);
+    generate_tiny_pe_exe(&paths, Bitness::B64);
 }
 
 fn main() {
