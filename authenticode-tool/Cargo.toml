@@ -12,6 +12,8 @@ categories = ["command-line-utilities"]
 description = "Authenticode command-line tool"
 keywords = ["authenticode", "cli"]
 
+default-run = "authenticode-tool"
+
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
