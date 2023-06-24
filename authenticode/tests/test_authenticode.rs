@@ -28,7 +28,7 @@ impl Update for AuthenticodeHasher {
 
 #[test]
 fn test_authenticode() {
-    let pe = include_bytes!("data/tiny.signed.efi");
+    let pe = include_bytes!("data/tiny64.signed.efi");
     let pe = PeFile64::parse(pe.as_slice()).unwrap();
     let mut hasher = AuthenticodeHasher::default();
     authenticode::authenticode_digest(&pe, &mut hasher).unwrap();
