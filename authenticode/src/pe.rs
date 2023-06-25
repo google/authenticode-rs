@@ -29,7 +29,7 @@ pub struct PeOffsetError;
 
 impl Display for PeOffsetError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "an offset with the PE is invalid")
+        write!(f, "an offset within the PE is invalid")
     }
 }
 
