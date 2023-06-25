@@ -79,7 +79,7 @@ fn check_exe(pe: &dyn PeTrait, expected: Expected) {
 
 #[test]
 fn test_authenticode32() {
-    let pe = include_bytes!("data/tiny32.signed.efi");
+    let pe = include_bytes!("testdata/tiny32.signed.efi");
     let pe64 = PeFile32::parse(pe.as_slice()).unwrap();
     check_exe(&pe64, Expected {
         sha1: "49f239f1cd5083912880e03982bb54528f2c358d",
@@ -89,7 +89,7 @@ fn test_authenticode32() {
 
 #[test]
 fn test_authenticode64() {
-    let pe = include_bytes!("data/tiny64.signed.efi");
+    let pe = include_bytes!("testdata/tiny64.signed.efi");
     let pe64 = PeFile64::parse(pe.as_slice()).unwrap();
     check_exe(&pe64, Expected {
         sha1: "e9bdfb63bdf687b8d3bf144033fcb09d7a393563",

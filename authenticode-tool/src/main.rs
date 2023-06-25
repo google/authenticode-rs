@@ -158,25 +158,25 @@ mod tests {
     fn test_action_info() {
         // Error: bad path.
         assert!(run_action(&Action::Info {
-            pe_path: "../authenticode/tests/data/bad.efi".into(),
+            pe_path: "../authenticode/tests/testdata/bad.efi".into(),
         })
         .is_err());
 
         // Success, no signatures.
         run_action(&Action::Info {
-            pe_path: "../authenticode/tests/data/tiny64.efi".into(),
+            pe_path: "../authenticode/tests/testdata/tiny64.efi".into(),
         })
         .unwrap();
 
         // Success, 32-bit.
         run_action(&Action::Info {
-            pe_path: "../authenticode/tests/data/tiny32.signed.efi".into(),
+            pe_path: "../authenticode/tests/testdata/tiny32.signed.efi".into(),
         })
         .unwrap();
 
         // Success, 64-bit.
         run_action(&Action::Info {
-            pe_path: "../authenticode/tests/data/tiny64.signed.efi".into(),
+            pe_path: "../authenticode/tests/testdata/tiny64.signed.efi".into(),
         })
         .unwrap();
     }
@@ -185,7 +185,7 @@ mod tests {
     fn test_action_get_cert() {
         // Error: bad path.
         assert!(run_action(&Action::GetCert(GetCertAction {
-            pe_path: "../authenticode/tests/data/bad.efi".into(),
+            pe_path: "../authenticode/tests/testdata/bad.efi".into(),
             sig_index: 0,
             cert_index: 0,
         }))
@@ -193,7 +193,7 @@ mod tests {
 
         // Error: no signatures.
         assert!(run_action(&Action::GetCert(GetCertAction {
-            pe_path: "../authenticode/tests/data/tiny64.efi".into(),
+            pe_path: "../authenticode/tests/testdata/tiny64.efi".into(),
             sig_index: 0,
             cert_index: 0,
         }))
@@ -201,7 +201,7 @@ mod tests {
 
         // Error: invalid signature index.
         assert!(run_action(&Action::GetCert(GetCertAction {
-            pe_path: "../authenticode/tests/data/tiny64.signed.efi".into(),
+            pe_path: "../authenticode/tests/testdata/tiny64.signed.efi".into(),
             sig_index: 1,
             cert_index: 0,
         }))
@@ -209,7 +209,7 @@ mod tests {
 
         // Error: invalid certificate index.
         assert!(run_action(&Action::GetCert(GetCertAction {
-            pe_path: "../authenticode/tests/data/tiny64.signed.efi".into(),
+            pe_path: "../authenticode/tests/testdata/tiny64.signed.efi".into(),
             sig_index: 0,
             cert_index: 1,
         }))
@@ -217,7 +217,7 @@ mod tests {
 
         // Success, 32-bit.
         run_action(&Action::GetCert(GetCertAction {
-            pe_path: "../authenticode/tests/data/tiny32.signed.efi".into(),
+            pe_path: "../authenticode/tests/testdata/tiny32.signed.efi".into(),
             sig_index: 0,
             cert_index: 0,
         }))
@@ -225,7 +225,7 @@ mod tests {
 
         // Success, 64-bit.
         run_action(&Action::GetCert(GetCertAction {
-            pe_path: "../authenticode/tests/data/tiny64.signed.efi".into(),
+            pe_path: "../authenticode/tests/testdata/tiny64.signed.efi".into(),
             sig_index: 0,
             cert_index: 0,
         }))
