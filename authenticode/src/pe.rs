@@ -10,11 +10,7 @@ use crate::usize_from_u32;
 use core::fmt::{self, Display, Formatter};
 use core::mem;
 use core::ops::Range;
-use memoffset::offset_of;
-use object::pe::{
-    ImageDataDirectory, ImageOptionalHeader32, ImageOptionalHeader64,
-    IMAGE_DIRECTORY_ENTRY_SECURITY,
-};
+use object::pe::{ImageDataDirectory, IMAGE_DIRECTORY_ENTRY_SECURITY};
 use object::read::pe::ImageOptionalHeader;
 use object::read::pe::{ImageNtHeaders, PeFile};
 use object::{pod, LittleEndian};
@@ -145,11 +141,9 @@ where
     let optional_header_bytes = pod::bytes_of(optional_header);
     let optional_header_offset = get_offset(optional_header_bytes)?;
     let check_sum_offset = optional_header_offset.checked_add(
-        if pe.nt_headers().is_type_64() {
-            offset_of!(ImageOptionalHeader64, check_sum)
-        } else {
-            offset_of!(ImageOptionalHeader32, check_sum)
-        },
+        // The offset of the `check_sum` field is the same within both
+        // the 32-bit and 64-bit headers.
+        64,
     )?;
 
     // Hash from checksum to the security data directory.
