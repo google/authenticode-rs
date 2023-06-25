@@ -126,7 +126,7 @@ fn action_get_cert(action: &GetCertAction) -> Result<()> {
     Ok(())
 }
 
-pub fn parse_pe(
+fn parse_pe(
     bytes: &[u8],
 ) -> Result<Box<dyn PeTrait + '_>, object::read::Error> {
     if let Ok(pe) = PeFile64::parse(bytes) {
