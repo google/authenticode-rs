@@ -162,6 +162,12 @@ mod tests {
         })
         .is_err());
 
+        // Success, no signatures.
+        run_action(&Action::Info {
+            pe_path: "../authenticode/tests/data/tiny64.efi".into(),
+        })
+        .unwrap();
+
         // Success, 32-bit.
         run_action(&Action::Info {
             pe_path: "../authenticode/tests/data/tiny32.signed.efi".into(),
