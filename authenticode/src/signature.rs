@@ -119,7 +119,7 @@ pub struct AuthenticodeSignature {
 impl AuthenticodeSignature {
     /// Parse an `AuthenticodeSignature` from DER-encoded bytes.
     ///
-    /// Note that whule many aspects of the data are validated, this
+    /// Note that while many aspects of the data are validated, this
     /// does not constitute actual signature verification.
     pub fn from_bytes(
         bytes: &[u8],
