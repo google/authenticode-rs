@@ -6,6 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![forbid(unsafe_code)]
+
 use anyhow::{anyhow, bail, Result};
 use authenticode::{AttributeCertificateIterator, PeTrait};
 use clap::{Parser, Subcommand};

@@ -11,6 +11,7 @@
 //! Reference:
 //! <https://docs.microsoft.com/en-us/windows/win32/debug/pe-format>
 
+#![forbid(unsafe_code)]
 // Allow using `std` if the `std` feature is enabled, or when running
 // tests. Otherwise enable `no_std`.
 #![cfg_attr(all(not(feature = "std"), not(test)), no_std)]
