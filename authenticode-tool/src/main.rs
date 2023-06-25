@@ -126,6 +126,13 @@ fn action_get_cert(action: &GetCertAction) -> Result<()> {
     Ok(())
 }
 
+fn run_action(action: &Action) -> Result<()> {
+    match action {
+        Action::GetCert(action) => action_get_cert(action),
+        Action::Info { pe_path } => action_info(pe_path),
+    }
+}
+
 fn parse_pe(
     bytes: &[u8],
 ) -> Result<Box<dyn PeTrait + '_>, object::read::Error> {
@@ -140,10 +147,7 @@ fn parse_pe(
 fn main() -> Result<()> {
     let cli = Cli::parse();
 
-    match &cli.action {
-        Action::GetCert(action) => action_get_cert(action),
-        Action::Info { pe_path } => action_info(pe_path),
-    }
+    run_action(&cli.action)
 }
 
 #[cfg(test)]
@@ -153,43 +157,43 @@ mod tests {
     #[test]
     fn test_action_get_cert() {
         // Error: no signatures.
-        assert!(action_get_cert(&GetCertAction {
+        assert!(run_action(&Action::GetCert(GetCertAction {
             pe_path: "../authenticode/tests/data/tiny64.efi".into(),
             sig_index: 0,
             cert_index: 0,
-        })
+        }))
         .is_err());
 
         // Error: invalid signature index.
-        assert!(action_get_cert(&GetCertAction {
+        assert!(run_action(&Action::GetCert(GetCertAction {
             pe_path: "../authenticode/tests/data/tiny64.signed.efi".into(),
             sig_index: 1,
             cert_index: 0,
-        })
+        }))
         .is_err());
 
         // Error: invalid certificate index.
-        assert!(action_get_cert(&GetCertAction {
+        assert!(run_action(&Action::GetCert(GetCertAction {
             pe_path: "../authenticode/tests/data/tiny64.signed.efi".into(),
             sig_index: 0,
             cert_index: 1,
-        })
+        }))
         .is_err());
 
         // Success, 32-bit.
-        action_get_cert(&GetCertAction {
+        run_action(&Action::GetCert(GetCertAction {
             pe_path: "../authenticode/tests/data/tiny32.signed.efi".into(),
             sig_index: 0,
             cert_index: 0,
-        })
+        }))
         .unwrap();
 
         // Success, 64-bit.
-        action_get_cert(&GetCertAction {
+        run_action(&Action::GetCert(GetCertAction {
             pe_path: "../authenticode/tests/data/tiny64.signed.efi".into(),
             sig_index: 0,
             cert_index: 0,
-        })
+        }))
         .unwrap();
     }
 }
