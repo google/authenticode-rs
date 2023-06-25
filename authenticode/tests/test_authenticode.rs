@@ -6,6 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![cfg(feature = "object")]
+
 use authenticode::{AttributeCertificateIterator, PeTrait};
 use cms::signed_data::SignerIdentifier;
 use digest::{Digest, Update};

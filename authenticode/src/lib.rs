@@ -22,9 +22,11 @@ extern crate alloc;
 
 mod authenticode_digest;
 mod pe;
-mod pe_object;
 mod signature;
 mod win_cert;
+
+#[cfg(feature = "object")]
+mod pe_object;
 
 use core::convert::TryInto;
 
