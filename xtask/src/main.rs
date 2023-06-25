@@ -52,7 +52,7 @@ struct Paths {
 impl Paths {
     fn new() -> Self {
         Self {
-            test_data: PathBuf::from("authenticode/tests/data"),
+            test_data: PathBuf::from("authenticode/tests/testdata"),
         }
     }
 
