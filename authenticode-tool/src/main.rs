@@ -145,3 +145,51 @@ fn main() -> Result<()> {
         Action::Info { pe_path } => action_info(pe_path),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_action_get_cert() {
+        // Error: no signatures.
+        assert!(action_get_cert(&GetCertAction {
+            pe_path: "../authenticode/tests/data/tiny64.efi".into(),
+            sig_index: 0,
+            cert_index: 0,
+        })
+        .is_err());
+
+        // Error: invalid signature index.
+        assert!(action_get_cert(&GetCertAction {
+            pe_path: "../authenticode/tests/data/tiny64.signed.efi".into(),
+            sig_index: 1,
+            cert_index: 0,
+        })
+        .is_err());
+
+        // Error: invalid certificate index.
+        assert!(action_get_cert(&GetCertAction {
+            pe_path: "../authenticode/tests/data/tiny64.signed.efi".into(),
+            sig_index: 0,
+            cert_index: 1,
+        })
+        .is_err());
+
+        // Success, 32-bit.
+        action_get_cert(&GetCertAction {
+            pe_path: "../authenticode/tests/data/tiny32.signed.efi".into(),
+            sig_index: 0,
+            cert_index: 0,
+        })
+        .unwrap();
+
+        // Success, 64-bit.
+        action_get_cert(&GetCertAction {
+            pe_path: "../authenticode/tests/data/tiny64.signed.efi".into(),
+            sig_index: 0,
+            cert_index: 0,
+        })
+        .unwrap();
+    }
+}
