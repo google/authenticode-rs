@@ -155,7 +155,36 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_action_info() {
+        // Error: bad path.
+        assert!(run_action(&Action::Info {
+            pe_path: "../authenticode/tests/data/bad.efi".into(),
+        })
+        .is_err());
+
+        // Success, 32-bit.
+        run_action(&Action::Info {
+            pe_path: "../authenticode/tests/data/tiny32.signed.efi".into(),
+        })
+        .unwrap();
+
+        // Success, 64-bit.
+        run_action(&Action::Info {
+            pe_path: "../authenticode/tests/data/tiny64.signed.efi".into(),
+        })
+        .unwrap();
+    }
+
+    #[test]
     fn test_action_get_cert() {
+        // Error: bad path.
+        assert!(run_action(&Action::GetCert(GetCertAction {
+            pe_path: "../authenticode/tests/data/bad.efi".into(),
+            sig_index: 0,
+            cert_index: 0,
+        }))
+        .is_err());
+
         // Error: no signatures.
         assert!(run_action(&Action::GetCert(GetCertAction {
             pe_path: "../authenticode/tests/data/tiny64.efi".into(),
