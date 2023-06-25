@@ -145,9 +145,7 @@ fn parse_pe(
 }
 
 fn main() -> Result<()> {
-    let cli = Cli::parse();
-
-    run_action(&cli.action)
+    run_action(&Cli::parse().action)
 }
 
 #[cfg(test)]
