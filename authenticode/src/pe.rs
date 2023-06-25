@@ -44,6 +44,20 @@ pub struct PeOffsets {
 }
 
 /// Trait for reading a PE file.
+///
+/// Note that this trait (and this crate as a whole) does not validate
+/// the PE file. It's up to the user to do that, if necessary. `PeTrait`
+/// is used only to get data directly relevant to authenticode. For
+/// example, this crate doesn't check for the magic bytes that indicate
+/// whether a file is a PE. However, bounds checking is always used, so
+/// an invalid PE file can only cause an error to be returned, never
+/// memory unsafety or a panic.
+///
+/// If the `object` feature is enabled then `PeTrait` will be
+/// implemented for [`PeFile`] from the [`object`] crate.
+///
+/// [`PeFile`]: https://docs.rs/object/latest/object/read/pe/struct.PeFile.html
+/// [`object`]: https://docs.rs/object/latest/object/
 pub trait PeTrait {
     /// Get the raw bytes of the PE file.
     fn data(&self) -> &[u8];
