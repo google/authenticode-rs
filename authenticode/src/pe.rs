@@ -7,7 +7,6 @@
 // except according to those terms.
 
 use crate::usize_from_u32;
-use core::convert::TryInto;
 use core::fmt::{self, Display, Formatter};
 use core::mem;
 use core::ops::Range;
@@ -136,8 +135,9 @@ where
     // Calculate the offset from the start of the pe data to the
     // beginning of `bytes`.
     let get_offset = |bytes: &[u8]| -> Option<usize> {
-        let offset = unsafe { bytes.as_ptr().offset_from(pe.data().as_ptr()) };
-        offset.try_into().ok()
+        let base = pe.data().as_ptr() as usize;
+        let bytes_start = bytes.as_ptr() as usize;
+        bytes_start.checked_sub(base)
     };
 
     // Get checksum offset.
