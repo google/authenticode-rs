@@ -29,7 +29,7 @@
 // Allow using `std` if the `std` feature is enabled, or when running
 // tests. Otherwise enable `no_std`.
 #![cfg_attr(all(not(feature = "std"), not(test)), no_std)]
-#![warn(clippy::integer_arithmetic)]
+#![warn(clippy::arithmetic_side_effects)]
 #![warn(missing_docs)]
 
 extern crate alloc;
