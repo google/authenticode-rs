@@ -61,7 +61,9 @@ fn check_exe(pe: &dyn PeTrait, expected: Expected) {
     );
 
     // Check signer.
-    let SignerIdentifier::IssuerAndSerialNumber(sid) = &signature.signer_info().sid else {
+    let SignerIdentifier::IssuerAndSerialNumber(sid) =
+        &signature.signer_info().sid
+    else {
         panic!();
     };
     assert_eq!(sid.issuer.to_string(), "CN=TestKey");
