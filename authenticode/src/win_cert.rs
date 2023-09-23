@@ -164,7 +164,7 @@ impl<'a> AttributeCertificateIterator<'a> {
 }
 
 impl<'a> Iterator for AttributeCertificateIterator<'a> {
-    type Item = AttributeCertificate<'a>;
+    type Item = Result<AttributeCertificate<'a>, AttributeCertificateError>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let header_size = 8;
@@ -176,25 +176,32 @@ impl<'a> Iterator for AttributeCertificateIterator<'a> {
 
         let cert_bytes = self.remaining_data;
         let cert_size = usize_from_u32(u32::from_le_bytes(
-            cert_bytes[0..4].try_into().unwrap(),
+            cert_bytes.get(0..4)?.try_into().unwrap(),
         ));
-        let revision = u16::from_le_bytes(cert_bytes[4..6].try_into().unwrap());
+        let revision = u16::from_le_bytes(cert_bytes.get(4..6)?.try_into().unwrap());
         let certificate_type =
-            u16::from_le_bytes(cert_bytes[6..8].try_into().unwrap());
+            u16::from_le_bytes(cert_bytes.get(6..8)?.try_into().unwrap());
 
         // Get the cert data (excludes the header).
-        let cert_data_size = cert_size.checked_sub(header_size).unwrap();
-        let cert_data = &cert_bytes
-            [header_size..header_size.checked_add(cert_data_size).unwrap()];
+        let cert_data_size = cert_size.checked_sub(header_size)?;
+        let uncheked_cert_data = &cert_bytes
+            .get(
+                header_size..header_size.checked_add(cert_data_size)?,
+            );
+
+        let cert_data = match &uncheked_cert_data {
+                Some(data) => data,
+                None => return Some(Err(AttributeCertificateError::OutOfBounds)),
+        };
 
         // Advance to next certificate. Data is 8-byte aligned, so round up.
-        let size_rounded_up = align_up(cert_size, 8).unwrap();
-        self.remaining_data = &cert_bytes[size_rounded_up..];
+        let size_rounded_up = align_up(cert_size, 8)?;
+        self.remaining_data = &cert_bytes.get(size_rounded_up..)?;
 
-        Some(AttributeCertificate {
+        Some(Ok(AttributeCertificate {
             revision,
             certificate_type,
             data: cert_data,
-        })
+        }))
     }
 }
