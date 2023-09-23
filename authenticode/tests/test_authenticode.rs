@@ -45,7 +45,11 @@ fn check_exe(pe: &dyn PeTrait, expected: Expected) {
     let signatures = AttributeCertificateIterator::new(pe)
         .unwrap()
         .unwrap()
-        .map(|attr_cert| attr_cert.get_authenticode_signature())
+        .map(|attr_cert| {
+            attr_cert
+                .expect("Invalid/Malformed signature")
+                .get_authenticode_signature()
+        })
         .collect::<Result<Vec<_>, _>>()
         .unwrap();
     assert_eq!(signatures.len(), 1);
