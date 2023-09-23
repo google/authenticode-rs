@@ -7,9 +7,9 @@
 // except according to those terms.
 
 use clap::{Parser, Subcommand};
-use command_run::Command;
 use fs_err as fs;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 use tempfile::TempDir;
 
 #[derive(Parser)]
@@ -74,40 +74,49 @@ impl Paths {
     }
 }
 
+fn run_command(command: &mut Command) {
+    println!("{}", format!("{command:?}").replace('"', ""));
+    let status = command.status().unwrap();
+    assert!(status.success());
+}
+
 fn generate_keys(paths: &Paths) {
     if paths.private_pem().exists() && paths.public_pem().exists() {
         println!("skipping key generation");
         return;
     }
 
-    #[rustfmt::skip]
-    Command::with_args("openssl", [
-        "req", "-x509",
-        "-newkey", "rsa:2048",
-        "-subj", "/CN=TestKey/",
-        // Turn off encryption so no password is needed.
-        "-nodes",
-    ])
-    .add_arg_pair("-keyout", paths.private_pem())
-    .add_arg_pair("-out", paths.public_pem())
-    .run()
-    .unwrap();
+    run_command(
+        Command::new("openssl")
+            .args([
+                "req",
+                "-x509",
+                "-newkey",
+                "rsa:2048",
+                "-subj",
+                "/CN=TestKey/",
+                // Turn off encryption so no password is needed.
+                "-nodes",
+                "-keyout",
+            ])
+            .arg(paths.private_pem())
+            .arg("-out")
+            .arg(paths.public_pem()),
+    );
 }
 
 fn build_exe(root_path: &Path, bitness: Bitness) {
-    Command::with_args(
-        "cargo",
-        [
-            "build",
-            "--release",
-            "--target",
-            bitness.target(),
-            "--manifest-path",
-        ],
-    )
-    .add_arg(root_path.join("Cargo.toml"))
-    .run()
-    .unwrap();
+    run_command(
+        Command::new("cargo")
+            .args([
+                "build",
+                "--release",
+                "--target",
+                bitness.target(),
+                "--manifest-path",
+            ])
+            .arg(root_path.join("Cargo.toml")),
+    );
 }
 
 fn generate_tiny_pe_exe(paths: &Paths, bitness: Bitness) {
@@ -122,10 +131,11 @@ fn generate_tiny_pe_exe(paths: &Paths, bitness: Bitness) {
     let tmp_path = tmp_dir.path();
 
     // Generate a small UEFI project.
-    Command::with_args("cargo", ["init", "--bin", "--name", "tiny"])
-        .add_arg(tmp_path)
-        .run()
-        .unwrap();
+    run_command(
+        Command::new("cargo")
+            .args(["init", "--bin", "--name", "tiny"])
+            .arg(tmp_path),
+    );
     fs::write(
         tmp_path.join("src/main.rs"),
         include_str!("tiny_uefi_main.rs"),
@@ -146,13 +156,16 @@ fn generate_tiny_pe_exe(paths: &Paths, bitness: Bitness) {
     .unwrap();
 
     // Create a signed copy.
-    Command::new("sbsign")
-        .add_arg_pair("--cert", paths.public_pem())
-        .add_arg_pair("--key", paths.private_pem())
-        .add_arg_pair("--output", paths.signed_exe(bitness))
-        .add_arg(paths.unsigned_exe(bitness))
-        .run()
-        .unwrap();
+    run_command(
+        Command::new("sbsign")
+            .arg("--cert")
+            .arg(paths.public_pem())
+            .arg("--key")
+            .arg(paths.private_pem())
+            .arg("--output")
+            .arg(paths.signed_exe(bitness))
+            .arg(paths.unsigned_exe(bitness)),
+    );
 }
 
 fn generate_test_data() {

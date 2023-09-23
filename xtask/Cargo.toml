@@ -9,6 +9,5 @@ version.workspace = true
 
 [dependencies]
 clap = { version = "4.3.8", default-features = false, features = ["derive", "std", "help"] }
-command-run = "1.1.1"
 fs-err = "2.9.0"
 tempfile = "3.6.0"
