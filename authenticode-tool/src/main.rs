@@ -9,7 +9,9 @@
 #![forbid(unsafe_code)]
 
 use anyhow::{anyhow, bail, Result};
-use authenticode::{AttributeCertificateIterator, PeTrait};
+use authenticode::{
+    AttributeCertificateIterator, AuthenticodeSignature, PeTrait,
+};
 use clap::{Parser, Subcommand};
 use cms::signed_data::SignerIdentifier;
 use der::Encode;
@@ -65,8 +67,10 @@ fn action_info(pe_path: &Path) -> Result<()> {
 
     let signatures =
         if let Some(iter) = AttributeCertificateIterator::new(&*pe)? {
-            iter.map(|attr_cert| attr_cert.get_authenticode_signature())
-                .collect::<Result<Vec<_>, _>>()?
+            iter.map(|attr_cert| -> Result<AuthenticodeSignature> {
+                Ok(attr_cert?.get_authenticode_signature()?)
+            })
+            .collect::<Result<Vec<_>, _>>()?
         } else {
             println!("No signatures");
             return Ok(());
@@ -109,12 +113,13 @@ fn action_get_cert(action: &GetCertAction) -> Result<()> {
     let pe = parse_pe(&data)?;
     let signatures =
         if let Some(iter) = AttributeCertificateIterator::new(&*pe)? {
-            iter.map(|attr_cert| attr_cert.get_authenticode_signature())
-                .collect::<Result<Vec<_>, _>>()?
+            iter.map(|attr_cert| -> Result<AuthenticodeSignature> {
+                Ok(attr_cert?.get_authenticode_signature()?)
+            })
+            .collect::<Result<Vec<_>, _>>()?
         } else {
             bail!("input file has no signatures");
         };
-
     let s = &signatures
         .get(action.sig_index)
         .ok_or(anyhow!("invalid signature index"))?;
