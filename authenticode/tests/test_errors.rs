@@ -38,6 +38,7 @@ fn test_attribute_certificate_authenticode_error() {
 fn test_attribute_certificate_error() {
     format!("{}", AttributeCertificateError::InvalidSize);
     format!("{}", AttributeCertificateError::OutOfBounds);
+    format!("{}", AttributeCertificateError::InvalidCertificateSize);
 }
 
 #[test]

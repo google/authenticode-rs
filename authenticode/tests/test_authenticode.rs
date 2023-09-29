@@ -9,7 +9,9 @@
 #![cfg(feature = "object")]
 
 use authenticode::{
+    AttributeCertificate, AttributeCertificateAuthenticodeError,
     AttributeCertificateError, AttributeCertificateIterator, PeTrait,
+    WIN_CERT_REVISION_2_0, WIN_CERT_TYPE_PKCS_SIGNED_DATA,
 };
 use cms::signed_data::SignerIdentifier;
 use core::mem::size_of;
@@ -23,6 +25,33 @@ use object::pe::{
 use object::read::pe::{PeFile32, PeFile64};
 use sha1::Sha1;
 use sha2::Sha256;
+
+#[test]
+fn test_get_authenticode_signature() {
+    // Test an invalid revision.
+    assert_eq!(
+        AttributeCertificate {
+            revision: 123,
+            certificate_type: WIN_CERT_TYPE_PKCS_SIGNED_DATA,
+            data: &[],
+        }
+        .get_authenticode_signature()
+        .unwrap_err(),
+        AttributeCertificateAuthenticodeError::InvalidCertificateRevision(123)
+    );
+
+    // Test an invalid cert type.
+    assert_eq!(
+        AttributeCertificate {
+            revision: WIN_CERT_REVISION_2_0,
+            certificate_type: 123,
+            data: &[],
+        }
+        .get_authenticode_signature()
+        .unwrap_err(),
+        AttributeCertificateAuthenticodeError::InvalidCertificateType(123)
+    );
+}
 
 #[derive(Default)]
 struct AuthenticodeHasher {
