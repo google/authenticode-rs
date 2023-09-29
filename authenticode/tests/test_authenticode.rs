@@ -224,9 +224,9 @@ fn test_cert_table_invalid_size() {
     );
 }
 
-/// Test an image containing a certificate with an invalid size.
+/// Test an image containing a certificate with a too-small size.
 #[test]
-fn test_invalid_cert_size() {
+fn test_cert_size_too_small() {
     let mut data = include_bytes!("testdata/tiny64.signed.efi").to_vec();
     let cert_table_range = {
         let pe = PeFile64::parse(data.as_slice()).unwrap();
@@ -237,6 +237,30 @@ fn test_invalid_cert_size() {
     // The cert size must be at least as big as the cert header (8 bytes).
     unsafe {
         cert_size.write(7);
+    }
+
+    let pe = PeFile64::parse(data.as_slice()).unwrap();
+    let mut iter = AttributeCertificateIterator::new(&pe).unwrap().unwrap();
+    assert_eq!(
+        iter.next().unwrap().unwrap_err(),
+        AttributeCertificateError::InvalidCertificateSize
+    );
+    assert!(iter.next().is_none());
+}
+
+/// Test an image containing a certificate with a too-big size.
+#[test]
+fn test_cert_size_too_big() {
+    let mut data = include_bytes!("testdata/tiny64.signed.efi").to_vec();
+    let cert_table_range = {
+        let pe = PeFile64::parse(data.as_slice()).unwrap();
+        pe.certificate_table_range().unwrap().unwrap()
+    };
+    let cert_table = &mut data[cert_table_range];
+    let cert_size: *mut u32 = cert_table.as_mut_ptr().cast();
+    // TODO
+    unsafe {
+        cert_size.write(100000);
     }
 
     let pe = PeFile64::parse(data.as_slice()).unwrap();
