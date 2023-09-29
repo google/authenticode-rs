@@ -21,7 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: cp .github/workflows/msrv_toolchain.toml rust-toolchain.toml
+      - run: rustup toolchain install 1.65 --profile minimal --no-self-update
+      - run: rustup default 1.65
       - uses: Swatinem/rust-cache@v2
       - run: rustc --version
       - run: cargo check
