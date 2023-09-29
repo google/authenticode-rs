@@ -96,6 +96,7 @@ impl std::error::Error for AttributeCertificateAuthenticodeError {}
 ///
 /// Note that PE attribute certificates are not related to X.509
 /// attribute certificates.
+#[derive(Debug)]
 pub struct AttributeCertificate<'a> {
     /// `WIN_CERTIFICATE` version number.
     pub revision: u16,
@@ -130,6 +131,7 @@ impl<'a> AttributeCertificate<'a> {
 }
 
 /// Iterator over PE attribute certificates.
+#[derive(Debug)]
 pub struct AttributeCertificateIterator<'a> {
     remaining_data: &'a [u8],
 }
