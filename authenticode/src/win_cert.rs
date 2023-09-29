@@ -27,7 +27,7 @@ fn check_total_size_valid(remaining_data: &[u8]) -> bool {
     iter.remaining_data.is_empty()
 }
 
-/// Error returned by [`AttributeCertificateIterator::new`].
+/// Error type for [`AttributeCertificateIterator`].
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum AttributeCertificateError {
     /// The certificate table's range is out of bounds.
@@ -37,7 +37,7 @@ pub enum AttributeCertificateError {
     /// certificate entry's aligned sizes.
     InvalidSize,
 
-    /// Certificate size declared in the certificate header is invalid
+    /// Certificate size declared in the certificate header is invalid.
     InvalidCertificateSize,
 }
 
