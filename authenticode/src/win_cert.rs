@@ -17,8 +17,16 @@ pub const WIN_CERT_REVISION_2_0: u16 = 0x0200;
 /// Certificate contains a PKCS#7 `SignedData` structure.
 pub const WIN_CERT_TYPE_PKCS_SIGNED_DATA: u16 = 0x0002;
 
-fn align_up(size: usize, align: usize) -> Option<usize> {
-    Some((size.checked_add(align)?.checked_sub(1)?) & !(align.checked_sub(1)?))
+fn align_up_to_8(val: usize) -> Option<usize> {
+    const ALIGN: usize = 8;
+    let r = val % ALIGN;
+    if r == 0 {
+        Some(val)
+    } else {
+        // OK to unwrap: the remainder cannot be larger than `ALIGN`.
+        let sub = ALIGN.checked_sub(r).unwrap();
+        val.checked_add(sub)
+    }
 }
 
 fn check_total_size_valid(remaining_data: &[u8]) -> bool {
@@ -232,7 +240,7 @@ impl<'a> Iterator for AttributeCertificateIterator<'a> {
         };
 
         // Advance to next certificate. Data is 8-byte aligned, so round up.
-        let size_rounded_up = align_up(cert_size, 8)?;
+        let size_rounded_up = align_up_to_8(cert_size)?;
         self.remaining_data = cert_bytes.get(size_rounded_up..)?;
 
         Some(Ok(AttributeCertificate {
@@ -249,12 +257,12 @@ mod tests {
 
     #[test]
     fn test_align_up() {
-        assert_eq!(align_up(0, 8).unwrap(), 0);
+        assert_eq!(align_up_to_8(0).unwrap(), 0);
         for i in 1..=8 {
-            assert_eq!(align_up(i, 8).unwrap(), 8);
+            assert_eq!(align_up_to_8(i).unwrap(), 8);
         }
         for i in 9..=16 {
-            assert_eq!(align_up(i, 8).unwrap(), 16);
+            assert_eq!(align_up_to_8(i).unwrap(), 16);
         }
     }
 }
