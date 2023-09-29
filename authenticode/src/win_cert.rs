@@ -216,3 +216,19 @@ impl<'a> Iterator for AttributeCertificateIterator<'a> {
         }))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_align_up() {
+        assert_eq!(align_up(0, 8).unwrap(), 0);
+        for i in 1..=8 {
+            assert_eq!(align_up(i, 8).unwrap(), 8);
+        }
+        for i in 9..=16 {
+            assert_eq!(align_up(i, 8).unwrap(), 16);
+        }
+    }
+}
