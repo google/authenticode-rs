@@ -203,10 +203,21 @@ impl<'a> Iterator for AttributeCertificateIterator<'a> {
                 ));
             };
 
-        let unchecked_cert_data = &cert_bytes
-            .get(header_size..header_size.checked_add(cert_data_size)?);
+        // Get the offset where the cert data ends. Return an error on
+        // overflow.
+        let cert_data_end = if let Some(cert_data_end) =
+            header_size.checked_add(cert_data_size)
+        {
+            cert_data_end
+        } else {
+            // End iteration after returning the error.
+            self.remaining_data = &[];
+            return Some(Err(
+                AttributeCertificateError::InvalidCertificateSize,
+            ));
+        };
 
-        let cert_data = match &unchecked_cert_data {
+        let cert_data = match cert_bytes.get(header_size..cert_data_end) {
             Some(data) => data,
             None => return Some(Err(AttributeCertificateError::InvalidSize)),
         };
