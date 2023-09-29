@@ -37,8 +37,11 @@ pub enum AttributeCertificateError {
     /// certificate entry's aligned sizes.
     InvalidSize,
 
-    /// Certificate size declared in the certificate header is invalid.
-    InvalidCertificateSize,
+    /// The size of an entry in the certificate table is invalid.
+    InvalidCertificateSize {
+        /// Size (in bytes) stored in the certificate entry header.
+        size: u32,
+    },
 }
 
 impl Display for AttributeCertificateError {
@@ -50,8 +53,8 @@ impl Display for AttributeCertificateError {
             Self::InvalidSize => {
                 write!(f, "certificate table size does not match the sum of the certificate entry's aligned sizes")
             }
-            Self::InvalidCertificateSize => {
-                write!(f, "certificate size declared in the certificate header is invalid")
+            Self::InvalidCertificateSize { size } => {
+                write!(f, "certificate table contains an entry with an invalid size: {size}")
             }
         }
     }
@@ -183,9 +186,12 @@ impl<'a> Iterator for AttributeCertificateIterator<'a> {
         // OK to unwrap: we've already verified above that at least 8
         // bytes are available.
         let cert_bytes = self.remaining_data;
-        let cert_size = usize_from_u32(u32::from_le_bytes(
-            cert_bytes[0..4].try_into().unwrap(),
-        ));
+        let cert_size =
+            u32::from_le_bytes(cert_bytes[0..4].try_into().unwrap());
+        let cert_size_err = AttributeCertificateError::InvalidCertificateSize {
+            size: cert_size,
+        };
+        let cert_size = usize_from_u32(cert_size);
         let revision = u16::from_le_bytes(cert_bytes[4..6].try_into().unwrap());
         let certificate_type =
             u16::from_le_bytes(cert_bytes[6..8].try_into().unwrap());
@@ -198,9 +204,7 @@ impl<'a> Iterator for AttributeCertificateIterator<'a> {
             } else {
                 // End iteration after returning the error.
                 self.remaining_data = &[];
-                return Some(Err(
-                    AttributeCertificateError::InvalidCertificateSize,
-                ));
+                return Some(Err(cert_size_err));
             };
 
         // Get the offset where the cert data ends. Return an error on
@@ -212,9 +216,7 @@ impl<'a> Iterator for AttributeCertificateIterator<'a> {
         } else {
             // End iteration after returning the error.
             self.remaining_data = &[];
-            return Some(Err(
-                AttributeCertificateError::InvalidCertificateSize,
-            ));
+            return Some(Err(cert_size_err));
         };
 
         // Get the cert data slice. Return an error if the size is
@@ -226,9 +228,7 @@ impl<'a> Iterator for AttributeCertificateIterator<'a> {
         } else {
             // End iteration after returning the error.
             self.remaining_data = &[];
-            return Some(Err(
-                AttributeCertificateError::InvalidCertificateSize,
-            ));
+            return Some(Err(cert_size_err));
         };
 
         // Advance to next certificate. Data is 8-byte aligned, so round up.
