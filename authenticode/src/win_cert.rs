@@ -180,6 +180,8 @@ impl<'a> Iterator for AttributeCertificateIterator<'a> {
             return None;
         }
 
+        // OK to unwrap: we've already verified above that at least 8
+        // bytes are available.
         let cert_bytes = self.remaining_data;
         let cert_size = usize_from_u32(u32::from_le_bytes(
             cert_bytes[0..4].try_into().unwrap(),
@@ -188,11 +190,13 @@ impl<'a> Iterator for AttributeCertificateIterator<'a> {
         let certificate_type =
             u16::from_le_bytes(cert_bytes[6..8].try_into().unwrap());
 
-        // Get the cert data (excludes the header).
+        // Get the cert data (excludes the header). Return an error if
+        // the cert data size is less than the header size.
         let cert_data_size =
             if let Some(cert_data_size) = cert_size.checked_sub(header_size) {
                 cert_data_size
             } else {
+                // End iteration after returning the error.
                 self.remaining_data = &[];
                 return Some(Err(
                     AttributeCertificateError::InvalidCertificateSize,
