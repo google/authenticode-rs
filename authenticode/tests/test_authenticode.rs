@@ -243,7 +243,7 @@ fn test_cert_size_too_small() {
     let mut iter = AttributeCertificateIterator::new(&pe).unwrap().unwrap();
     assert_eq!(
         iter.next().unwrap().unwrap_err(),
-        AttributeCertificateError::InvalidCertificateSize
+        AttributeCertificateError::InvalidCertificateSize { size: 7 }
     );
     assert!(iter.next().is_none());
 }
@@ -260,14 +260,14 @@ fn test_cert_size_too_big() {
     let cert_size: *mut u32 = cert_table.as_mut_ptr().cast();
     // TODO
     unsafe {
-        cert_size.write(100000);
+        cert_size.write(100_000);
     }
 
     let pe = PeFile64::parse(data.as_slice()).unwrap();
     let mut iter = AttributeCertificateIterator::new(&pe).unwrap().unwrap();
     assert_eq!(
         iter.next().unwrap().unwrap_err(),
-        AttributeCertificateError::InvalidCertificateSize
+        AttributeCertificateError::InvalidCertificateSize { size: 100_000 }
     );
     assert!(iter.next().is_none());
 }
