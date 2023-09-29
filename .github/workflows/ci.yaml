@@ -84,9 +84,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: Swatinem/rust-cache@v2
-    - run: cargo install --locked cargo-deny
-    - run: cargo deny check
+    # Download a pinned version of cargo-deny to make this CI job faster.
+    - run: |
+        curl --fail --location --output cargo-deny.tar.gz https://github.com/EmbarkStudios/cargo-deny/releases/download/0.14.3/cargo-deny-0.14.3-x86_64-unknown-linux-musl.tar.gz
+        echo "7a8b4ccaa6cadda7feea6c125a08f4b63f644fc4e42b09f0e4cdffc42f33f1c3 cargo-deny.tar.gz" | sha256sum --check
+        tar xvf cargo-deny.tar.gz
+        cargo-deny-0.14.3-x86_64-unknown-linux-musl/cargo-deny deny check
 
   coverage:
     runs-on: ubuntu-latest
