@@ -217,9 +217,18 @@ impl<'a> Iterator for AttributeCertificateIterator<'a> {
             ));
         };
 
-        let cert_data = match cert_bytes.get(header_size..cert_data_end) {
-            Some(data) => data,
-            None => return Some(Err(AttributeCertificateError::InvalidSize)),
+        // Get the cert data slice. Return an error if the size is
+        // outside the valid range.
+        let cert_data = if let Some(cert_data) =
+            cert_bytes.get(header_size..cert_data_end)
+        {
+            cert_data
+        } else {
+            // End iteration after returning the error.
+            self.remaining_data = &[];
+            return Some(Err(
+                AttributeCertificateError::InvalidCertificateSize,
+            ));
         };
 
         // Advance to next certificate. Data is 8-byte aligned, so round up.
