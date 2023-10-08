@@ -24,7 +24,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 cms = { version = "0.2.0", default-features = false }
-const-oid = { version = "0.9.0", default-features = false }
+const-oid = { version = "0.9.5", default-features = false }
 der = { version = "0.7.0", default-features = false, features = ["derive"] }
 digest = { version = "0.10.0", default-features = false }
 object = { version = "0.30.0", default-features = false, features = ["pe", "read_core", "unaligned"], optional = true }
