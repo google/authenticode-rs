@@ -21,7 +21,7 @@ rust-version.workspace = true
 version.workspace = true
 
 [dependencies]
-anyhow = "1.0.71"
+anyhow = "1.0.75"
 authenticode = { path = "../authenticode", version = "0.3.0", features = ["object", "std"] }
 clap = { version = "4.0.0", features = ["derive"] }
 cms = { version = "0.2.0", default-features = false }
