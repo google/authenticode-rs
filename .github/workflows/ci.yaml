@@ -23,8 +23,8 @@ jobs:
       CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
     steps:
       - uses: actions/checkout@v4
-      - run: rustup toolchain install 1.68 --profile minimal --no-self-update
-      - run: rustup default 1.68
+      - run: rustup toolchain install 1.70 --profile minimal --no-self-update
+      - run: rustup default 1.70
       - uses: Swatinem/rust-cache@v2
       - run: rustc --version
       - run: cargo check
