@@ -8,6 +8,6 @@ repository.workspace = true
 version.workspace = true
 
 [dependencies]
-clap = { version = "4.3.8", default-features = false, features = ["derive", "std", "help"] }
+clap = { version = "4.4.7", default-features = false, features = ["derive", "std", "help"] }
 fs-err = "2.9.0"
 tempfile = "3.6.0"
