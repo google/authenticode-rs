@@ -18,6 +18,10 @@ allow = [
 multiple-versions = "deny"
 skip = [
      { name = "bitflags", version = "1.3.2" },
-     { name = "linux-raw-sys", version = "0.3.8" },
-     { name = "rustix", version = "0.37.19" },
+     { name = "rsa", version = "0.9.4" },
 ]
+
+[advisories]
+# See https://github.com/RustCrypto/RSA/issues/19#issuecomment-1822995643.
+# There is no workaround available yet.
+ignore = ["RUSTSEC-2023-0071"]
