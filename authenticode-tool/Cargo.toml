@@ -24,7 +24,7 @@ version.workspace = true
 anyhow = "1.0.71"
 authenticode = { path = "../authenticode", version = "0.3.0", features = ["object", "std"] }
 clap = { version = "4.4.7", features = ["derive"] }
-cms = { version = "0.2.0", default-features = false }
+cms = { version = "0.2.2", default-features = false }
 der = { version = "0.7.0", default-features = false, features = ["std"] }
 digest = { version = "0.10.0", default-features = false }
 object = { version = "0.32.0", default-features = false, features = ["pe", "read_core", "std"] }
