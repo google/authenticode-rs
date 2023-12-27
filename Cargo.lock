@@ -58,7 +58,7 @@ checksum = "c9d19de80eff169429ac1e9f48fffb163916b448a44e8e046186232046d9e1f9"
 
 [[package]]
 name = "authenticode"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "cms",
  "const-oid",
@@ -74,7 +74,7 @@ dependencies = [
 
 [[package]]
 name = "authenticode-tool"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "anyhow",
  "authenticode",
@@ -702,7 +702,7 @@ dependencies = [
 
 [[package]]
 name = "xtask"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "clap",
  "fs-err",
