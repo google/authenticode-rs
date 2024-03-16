@@ -11,6 +11,7 @@ name = "authenticode"
 categories = ["data-structures", "embedded", "no-std"]
 description = "Library for working with Authenticode (no-std)"
 keywords = ["authenticode", "no_std"]
+exclude = ["tests/testdata"]
 
 edition.workspace = true
 license.workspace = true
