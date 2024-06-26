@@ -251,6 +251,15 @@ impl AuthenticodeSignature {
         self.signer_info().signature.as_bytes()
     }
 
+    /// Get the encapsulated content.
+    pub fn encapsulated_content(&self) -> Option<&[u8]> {
+        self.signed_data
+            .encap_content_info
+            .econtent
+            .as_ref()
+            .map(|c| c.value())
+    }
+
     /// Get the certificate chain.
     pub fn certificates(&self) -> impl Iterator<Item = &Certificate> {
         self.signed_data
