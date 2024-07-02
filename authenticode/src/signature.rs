@@ -6,6 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use alloc::vec::Vec;
 use cms::content_info::CmsVersion;
 use cms::content_info::ContentInfo;
 use cms::signed_data::{SignedData, SignerInfo};
@@ -249,6 +250,14 @@ impl AuthenticodeSignature {
     /// it is not guaranteed to be correct.
     pub fn signature(&self) -> &[u8] {
         self.signer_info().signature.as_bytes()
+    }
+
+    /// Get the encapsulated content so that the message digest attribute can be verified
+    pub fn encapsulated_content(&self) -> Option<Vec<u8>> {
+        match &self.signed_data.encap_content_info.econtent {
+            Some(encap) => Some(encap.value().to_vec()),
+            None => None
+        }
     }
 
     /// Get the certificate chain.
