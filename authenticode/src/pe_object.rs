@@ -13,7 +13,7 @@ use core::ops::Range;
 use object::pe::{ImageDataDirectory, IMAGE_DIRECTORY_ENTRY_SECURITY};
 use object::read::pe::ImageOptionalHeader;
 use object::read::pe::{ImageNtHeaders, PeFile};
-use object::{pod, LittleEndian};
+use object::{pod, LittleEndian, SectionIndex};
 
 impl<'data, I> PeTrait for PeFile<'data, I>
 where
@@ -31,8 +31,10 @@ where
         &self,
         index: usize,
     ) -> Result<Range<usize>, PeOffsetError> {
-        let section =
-            self.section_table().section(index).expect("invalid index");
+        let section = self
+            .section_table()
+            .section(SectionIndex(index))
+            .expect("invalid index");
         let start =
             usize_from_u32(section.pointer_to_raw_data.get(LittleEndian));
         let size = usize_from_u32(section.size_of_raw_data.get(LittleEndian));
