@@ -17,9 +17,6 @@ allow = [
 
 [bans]
 multiple-versions = "deny"
-skip = [
-     { name = "rsa", version = "0.9.4" },
-]
 
 [advisories]
 # See https://github.com/RustCrypto/RSA/issues/19#issuecomment-1822995643.
