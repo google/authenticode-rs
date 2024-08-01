@@ -19,3 +19,9 @@ version = "0.4.3"
 
 [workspace.dependencies]
 clap = { version = "4.4.7", features = ["derive"] }
+cms = { version = "0.2.0", default-features = false }
+der = { version = "0.7.0", default-features = false }
+digest = { version = "0.10.0", default-features = false }
+object = { version = "0.36.0", default-features = false, features = ["pe", "read_core", "unaligned"] }
+sha1 = { version = "0.10.0", default-features = false }
+sha2 = { version = "0.10.0", default-features = false }
