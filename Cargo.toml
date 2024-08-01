@@ -16,3 +16,6 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/google/authenticode-rs"
 rust-version = "1.74"
 version = "0.4.3"
+
+[workspace.dependencies]
+clap = { version = "4.4.7", features = ["derive"] }
