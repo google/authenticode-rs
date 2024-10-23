@@ -9,5 +9,5 @@ version.workspace = true
 
 [dependencies]
 clap.workspace = true
-fs-err = "2.9.0"
+fs-err = "3.0.0"
 tempfile = "3.8.1"
