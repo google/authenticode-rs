@@ -119,7 +119,7 @@ pub struct AttributeCertificate<'a> {
     pub data: &'a [u8],
 }
 
-impl<'a> AttributeCertificate<'a> {
+impl AttributeCertificate<'_> {
     /// Get the certificate data as an authenticode signature.
     pub fn get_authenticode_signature(
         &self,
