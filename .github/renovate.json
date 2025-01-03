@@ -6,5 +6,16 @@
   "lockFileMaintenance": {
     "enabled": true
   },
-  "rangeStrategy": "update-lockfile"
+  "rangeStrategy": "update-lockfile",
+  "automerge": true,
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "crate-ci/typos"
+      ],
+      "extends": [
+        "schedule:monthly"
+      ]
+    }
+  ]
 }
