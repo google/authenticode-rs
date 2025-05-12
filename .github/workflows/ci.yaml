@@ -19,12 +19,10 @@ name: CI
 jobs:
   msrv:
     runs-on: ubuntu-latest
-    env:
-      CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
     steps:
       - uses: actions/checkout@v4
-      - run: rustup toolchain install 1.74 --profile minimal --no-self-update
-      - run: rustup default 1.74
+      - run: rustup toolchain install 1.81 --profile minimal --no-self-update
+      - run: rustup default 1.81
       - uses: Swatinem/rust-cache@v2
       - run: rustc --version
       - run: cargo check
