@@ -102,7 +102,7 @@ pub enum AuthenticodeSignatureParseError {
 impl Display for AuthenticodeSignatureParseError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         // TODO(nicholasbishop): better error message.
-        write!(f, "authenticode signature parse error: {:?}", self)
+        write!(f, "authenticode signature parse error: {self:?}")
     }
 }
 
