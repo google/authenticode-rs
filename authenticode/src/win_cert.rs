@@ -6,8 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use crate::usize_from_u32;
 use crate::PeTrait;
+use crate::usize_from_u32;
 use crate::{AuthenticodeSignature, AuthenticodeSignatureParseError};
 use core::fmt::{self, Display, Formatter};
 
@@ -59,10 +59,16 @@ impl Display for AttributeCertificateError {
                 write!(f, "certificate table range is out of bounds")
             }
             Self::InvalidSize => {
-                write!(f, "certificate table size does not match the sum of the certificate entry's aligned sizes")
+                write!(
+                    f,
+                    "certificate table size does not match the sum of the certificate entry's aligned sizes"
+                )
             }
             Self::InvalidCertificateSize { size } => {
-                write!(f, "certificate table contains an entry with an invalid size: {size}")
+                write!(
+                    f,
+                    "certificate table contains an entry with an invalid size: {size}"
+                )
             }
         }
     }

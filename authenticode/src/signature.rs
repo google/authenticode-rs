@@ -10,8 +10,8 @@ use cms::content_info::CmsVersion;
 use cms::content_info::ContentInfo;
 use cms::signed_data::{SignedData, SignerInfo};
 use core::fmt::{self, Display, Formatter};
-use der::asn1::{ObjectIdentifier, OctetString};
 use der::Decode;
+use der::asn1::{ObjectIdentifier, OctetString};
 use der::{Sequence, SliceReader};
 use x509_cert::Certificate;
 

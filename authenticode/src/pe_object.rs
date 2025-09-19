@@ -10,10 +10,10 @@ use crate::pe::{PeOffsetError, PeOffsets, PeTrait};
 use crate::usize_from_u32;
 use core::mem;
 use core::ops::Range;
-use object::pe::{ImageDataDirectory, IMAGE_DIRECTORY_ENTRY_SECURITY};
+use object::pe::{IMAGE_DIRECTORY_ENTRY_SECURITY, ImageDataDirectory};
 use object::read::pe::ImageOptionalHeader;
 use object::read::pe::{ImageNtHeaders, PeFile};
-use object::{pod, LittleEndian, SectionIndex};
+use object::{LittleEndian, SectionIndex, pod};
 
 impl<'data, I> PeTrait for PeFile<'data, I>
 where

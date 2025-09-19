@@ -19,8 +19,8 @@ use core::slice;
 use digest::{Digest, Update};
 use object::endian::LittleEndian as LE;
 use object::pe::{
-    ImageDataDirectory, ImageFileHeader, ImageOptionalHeader64,
-    IMAGE_DIRECTORY_ENTRY_SECURITY,
+    IMAGE_DIRECTORY_ENTRY_SECURITY, ImageDataDirectory, ImageFileHeader,
+    ImageOptionalHeader64,
 };
 use object::read::pe::{PeFile32, PeFile64};
 use sha1::Sha1;
@@ -127,20 +127,26 @@ fn check_exe(pe: &dyn PeTrait, expected: Expected) {
 fn test_authenticode32() {
     let pe = include_bytes!("testdata/tiny32.signed.efi");
     let pe64 = PeFile32::parse(pe.as_slice()).unwrap();
-    check_exe(&pe64, Expected {
-        sha1: "49f239f1cd5083912880e03982bb54528f2c358d",
-        sha256: "4f5b3633fc51d9447beb5c546e9ae6e58d6eb42d1e96d623dc168d97013c08a8",
-    });
+    check_exe(
+        &pe64,
+        Expected {
+            sha1: "49f239f1cd5083912880e03982bb54528f2c358d",
+            sha256: "4f5b3633fc51d9447beb5c546e9ae6e58d6eb42d1e96d623dc168d97013c08a8",
+        },
+    );
 }
 
 #[test]
 fn test_authenticode64() {
     let pe = include_bytes!("testdata/tiny64.signed.efi");
     let pe64 = PeFile64::parse(pe.as_slice()).unwrap();
-    check_exe(&pe64, Expected {
-        sha1: "e9bdfb63bdf687b8d3bf144033fcb09d7a393563",
-        sha256: "a82d7e4f091c44ec75d97746b3461c8ea9151e2313f8e9a4330432ee5f25b2ae",
-    });
+    check_exe(
+        &pe64,
+        Expected {
+            sha1: "e9bdfb63bdf687b8d3bf144033fcb09d7a393563",
+            sha256: "a82d7e4f091c44ec75d97746b3461c8ea9151e2313f8e9a4330432ee5f25b2ae",
+        },
+    );
 }
 
 fn modify_image_security_data_dir<F>(f: F) -> Vec<u8>
