@@ -48,8 +48,8 @@ pub use authenticode_digest::authenticode_digest;
 pub use pe::{PeOffsetError, PeOffsets, PeTrait};
 pub use signature::{
     AuthenticodeSignature, AuthenticodeSignatureParseError, DigestInfo,
-    SpcAttributeTypeAndOptionalValue, SpcIndirectDataContent,
-    SPC_INDIRECT_DATA_OBJID,
+    SPC_INDIRECT_DATA_OBJID, SpcAttributeTypeAndOptionalValue,
+    SpcIndirectDataContent,
 };
 pub use win_cert::{
     AttributeCertificate, AttributeCertificateAuthenticodeError,
