@@ -243,6 +243,12 @@ impl AuthenticodeSignature {
         self.indirect_data.message_digest.digest.as_bytes()
     }
 
+    /// Get the algorithm used for the authenticode digest embedded in the
+    /// signature.
+    pub fn digest_algorithm(&self) -> &spki::AlgorithmIdentifierOwned {
+        &self.indirect_data.message_digest.digest_algorithm
+    }
+
     /// Get the authenticode signature.
     ///
     /// This is the `encryptedDigest` value embedded in the signature;
