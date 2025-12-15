@@ -199,27 +199,14 @@ impl AuthenticodeSignature {
             return Err(AuthenticodeSignatureParseError::AlgorithmMismatch);
         }
 
-        let signed_attrs = if let Some(signed_attrs) = &signer_info.signed_attrs
-        {
-            signed_attrs
-        } else {
-            return Err(
-                AuthenticodeSignatureParseError::EmptyAuthenticatedAttributes,
-            );
-        };
-
-        if !signed_attrs
-            .iter()
-            .any(|a| a.oid == const_oid::db::rfc6268::ID_CONTENT_TYPE)
-        {
-            return Err(AuthenticodeSignatureParseError::MissingContentTypeAuthenticatedAttribute);
-        }
-
-        if !signed_attrs
-            .iter()
-            .any(|a| a.oid == const_oid::db::rfc6268::ID_MESSAGE_DIGEST)
-        {
-            return Err(AuthenticodeSignatureParseError::MissingMessageDigestAuthenticatedAttribute);
+        if let Some(signed_attrs) = &signer_info.signed_attrs {
+            // If we have signed_attrs, we _must_ have message-digest.
+            if !signed_attrs
+                .iter()
+                .any(|a| a.oid == const_oid::db::rfc6268::ID_MESSAGE_DIGEST)
+            {
+                return Err(AuthenticodeSignatureParseError::MissingMessageDigestAuthenticatedAttribute);
+            }
         }
 
         Ok(Self {
