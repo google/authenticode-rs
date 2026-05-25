@@ -101,6 +101,7 @@ fn test_authenticode_signature_parse_error() {
     );
     format!("{}", AuthenticodeSignatureParseError::MissingContentTypeAuthenticatedAttribute);
     format!("{}", AuthenticodeSignatureParseError::MissingMessageDigestAuthenticatedAttribute);
+    format!("{}", AuthenticodeSignatureParseError::MessageDigestMismatch);
 }
 
 #[test]

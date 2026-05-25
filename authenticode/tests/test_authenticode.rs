@@ -277,3 +277,41 @@ fn test_cert_size_too_big() {
     );
     assert!(iter.next().is_none());
 }
+
+/// Test that a signature with a mismatching messageDigest authenticated attribute is rejected.
+#[test]
+fn test_message_digest_mismatch() {
+    let data = include_bytes!("testdata/tiny64.signed.efi");
+    let pe = PeFile64::parse(data.as_slice()).unwrap();
+    let attr_cert = AttributeCertificateIterator::new(&pe)
+        .unwrap()
+        .unwrap()
+        .next()
+        .unwrap()
+        .unwrap();
+
+    let sig = attr_cert.get_authenticode_signature().unwrap();
+    let encap = sig.encapsulated_content().unwrap();
+
+    use sha2::Digest;
+    let mut hasher = sha2::Sha256::new();
+    hasher.update(encap);
+    let hash = hasher.finalize();
+
+    // Find the hash in the certificate data and corrupt it.
+    let mut mutated_data = attr_cert.data.to_vec();
+    let mut found = false;
+    for i in 0..=mutated_data.len().saturating_sub(hash.len()) {
+        if &mutated_data[i..i + hash.len()] == hash.as_slice() {
+            mutated_data[i] ^= 1;
+            found = true;
+            break;
+        }
+    }
+    assert!(found, "Could not find the econtent hash in the signature data");
+
+    // Re-parse and verify it fails with MessageDigestMismatch.
+    let parse_err = authenticode::AuthenticodeSignature::from_bytes(&mutated_data).unwrap_err();
+    assert_eq!(parse_err, authenticode::AuthenticodeSignatureParseError::MessageDigestMismatch);
+}
+
