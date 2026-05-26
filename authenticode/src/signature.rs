@@ -106,8 +106,7 @@ impl Display for AuthenticodeSignatureParseError {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for AuthenticodeSignatureParseError {}
+impl core::error::Error for AuthenticodeSignatureParseError {}
 
 /// Parsed authenticode signature.
 #[derive(Clone, Debug, Eq, PartialEq)]

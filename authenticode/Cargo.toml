@@ -39,4 +39,3 @@ sha2.workspace = true
 
 [features]
 object = ["dep:object"]
-std = []
