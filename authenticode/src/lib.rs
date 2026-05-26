@@ -17,18 +17,14 @@
 //!
 //! * `object`: Enables a dependency on [`object`] and impls [`PeTrait`]
 //!   for [`PeFile`].
-//! * `std`: Turns off `no_std` and impls [`std::error::Error`] for the
-//!   error types.
 //!
 //! [`PeFile`]: https://docs.rs/object/latest/object/read/pe/struct.PeFile.html
 //! [`object`]: https://docs.rs/object/latest/object/
-//! [`std::error::Error`]: https://doc.rust-lang.org/std/error/trait.Error.html
 
 #![forbid(unsafe_code)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
-// Allow using `std` if the `std` feature is enabled, or when running
-// tests. Otherwise enable `no_std`.
-#![cfg_attr(all(not(feature = "std"), not(test)), no_std)]
+// Allow using `std` only when running tests.
+#![cfg_attr(not(test), no_std)]
 #![warn(clippy::arithmetic_side_effects)]
 #![warn(missing_docs)]
 

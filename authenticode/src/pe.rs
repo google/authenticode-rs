@@ -22,8 +22,7 @@ impl Display for PeOffsetError {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for PeOffsetError {}
+impl core::error::Error for PeOffsetError {}
 
 /// Various offsets within the PE file needed for authenticode hashing.
 #[derive(Clone, Debug, Eq, PartialEq)]
