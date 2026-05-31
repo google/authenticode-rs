@@ -35,8 +35,10 @@ spki = { version = "0.7.0", default-features = false }
 x509-cert = { version = "0.2.0", default-features = false }
 
 [dev-dependencies]
+base16ct.workspace = true
+sha1.workspace = true
+sha2.workspace = true
 
 [features]
 object = ["dep:object"]
 std = []
-

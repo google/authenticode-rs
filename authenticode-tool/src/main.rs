@@ -12,6 +12,7 @@ use anyhow::{Result, anyhow, bail};
 use authenticode::{
     AttributeCertificateIterator, AuthenticodeSignature, PeTrait,
 };
+use base16ct::HexDisplay;
 use clap::{Parser, Subcommand};
 use cms::signed_data::SignerIdentifier;
 use der::Encode;
@@ -62,8 +63,8 @@ fn action_info(pe_path: &Path) -> Result<()> {
     let mut hasher = AuthenticodeHasher::default();
     authenticode::authenticode_digest(&*pe, &mut hasher)?;
 
-    println!("SHA-1:   {:x}", hasher.sha1.finalize());
-    println!("SHA-256: {:x}", hasher.sha256.finalize());
+    println!("SHA-1:   {}", HexDisplay(&hasher.sha1.finalize()));
+    println!("SHA-256: {}", HexDisplay(&hasher.sha256.finalize()));
 
     let signatures =
         if let Some(iter) = AttributeCertificateIterator::new(&*pe)? {

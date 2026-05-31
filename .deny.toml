@@ -9,16 +9,12 @@
 [licenses]
 allow = [
   "Apache-2.0",
-  "BSD-2-Clause",
-  "BSD-3-Clause",
   "MIT",
   "Unicode-3.0",
 ]
 
 [bans]
 multiple-versions = "deny"
-
-[advisories]
-# See https://github.com/RustCrypto/RSA/issues/19#issuecomment-1822995643.
-# There is no workaround available yet.
-ignore = ["RUSTSEC-2023-0071"]
+skip-tree = [
+    { name = "getrandom", version = "0.*" },
+]

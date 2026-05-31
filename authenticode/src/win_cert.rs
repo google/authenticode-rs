@@ -74,8 +74,7 @@ impl Display for AttributeCertificateError {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for AttributeCertificateError {}
+impl core::error::Error for AttributeCertificateError {}
 
 /// Error returned by [`AttributeCertificate::get_authenticode_signature`].
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -106,8 +105,7 @@ impl Display for AttributeCertificateAuthenticodeError {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for AttributeCertificateAuthenticodeError {}
+impl core::error::Error for AttributeCertificateAuthenticodeError {}
 
 /// Raw data for a PE attribute certificate.
 ///

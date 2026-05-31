@@ -13,6 +13,7 @@ use authenticode::{
     AttributeCertificateError, AttributeCertificateIterator, PeTrait,
     WIN_CERT_REVISION_2_0, WIN_CERT_TYPE_PKCS_SIGNED_DATA,
 };
+use base16ct::HexDisplay;
 use cms::signed_data::SignerIdentifier;
 use core::mem::size_of;
 use core::slice;
@@ -74,8 +75,8 @@ struct Expected {
 fn check_exe(pe: &dyn PeTrait, expected: Expected) {
     let mut hasher = AuthenticodeHasher::default();
     authenticode::authenticode_digest(pe, &mut hasher).unwrap();
-    let sha1 = format!("{:x}", hasher.sha1.finalize());
-    let sha256 = format!("{:x}", hasher.sha256.finalize());
+    let sha1 = format!("{:x}", HexDisplay(&hasher.sha1.finalize()));
+    let sha256 = format!("{:x}", HexDisplay(&hasher.sha256.finalize()));
     assert_eq!(sha1, expected.sha1);
     assert_eq!(sha256, expected.sha256);
 
