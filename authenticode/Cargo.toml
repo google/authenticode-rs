@@ -25,7 +25,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 cms.workspace = true
-const-oid = { version = "0.9.0", default-features = false }
+const-oid = { version = "0.10.0", default-features = false }
 der = { workspace = true, features = ["derive"] }
 digest.workspace = true
 object = { workspace = true, optional = true }
