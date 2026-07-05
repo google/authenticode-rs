@@ -97,6 +97,9 @@ pub enum AuthenticodeSignatureParseError {
 
     /// The `messageDigest` authenticated attribute is missing.
     MissingMessageDigestAuthenticatedAttribute,
+
+    /// The messageDigest authenticated attribute value does not match the hash of the encapsulated content.
+    MessageDigestMismatch,
 }
 
 impl Display for AuthenticodeSignatureParseError {
@@ -199,12 +202,39 @@ impl AuthenticodeSignature {
         }
 
         if let Some(signed_attrs) = &signer_info.signed_attrs {
-            // If we have signed_attrs, we _must_ have message-digest.
-            if !signed_attrs
+            let attr_digest = signed_attrs
                 .iter()
-                .any(|a| a.oid == const_oid::db::rfc6268::ID_MESSAGE_DIGEST)
-            {
-                return Err(AuthenticodeSignatureParseError::MissingMessageDigestAuthenticatedAttribute);
+                .find(|a| a.oid == const_oid::db::rfc6268::ID_MESSAGE_DIGEST)
+                .ok_or(AuthenticodeSignatureParseError::MissingMessageDigestAuthenticatedAttribute)?;
+
+            let embedded_any_val = attr_digest.values.get(0).ok_or(AuthenticodeSignatureParseError::MissingMessageDigestAuthenticatedAttribute)?;
+            let embedded_digest = embedded_any_val.decode_as::<der::asn1::OctetString>().map_err(AuthenticodeSignatureParseError::InvalidContentInfo)?;
+
+            let raw_econtent = signed_data
+                .encap_content_info
+                .econtent
+                .as_ref()
+                .ok_or(AuthenticodeSignatureParseError::EmptyEncapsulatedContent)?
+                .value();
+
+            let matches_hash = match signer_info.digest_alg.oid {
+                const_oid::db::rfc3279::ID_SHA1 => {
+                    use digest::Digest;
+                    let mut hasher = sha1::Sha1::new();
+                    hasher.update(raw_econtent);
+                    hasher.finalize().as_slice() == embedded_digest.as_bytes()
+                }
+                const_oid::db::rfc3560::ID_SHA256 => {
+                    use digest::Digest;
+                    let mut hasher = sha2::Sha256::new();
+                    hasher.update(raw_econtent);
+                    hasher.finalize().as_slice() == embedded_digest.as_bytes()
+                }
+                _ => false,
+            };
+
+            if !matches_hash {
+                return Err(AuthenticodeSignatureParseError::MessageDigestMismatch);
             }
         }
 
