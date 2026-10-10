@@ -150,6 +150,45 @@ fn test_authenticode64() {
     );
 }
 
+/// Get the authenticode digest of an unsigned 64-bit PE.
+fn digest_unsigned64(data: &[u8]) -> (String, String) {
+    let pe = PeFile64::parse(data).unwrap();
+    let mut hasher = AuthenticodeHasher::default();
+    authenticode::authenticode_digest(&pe, &mut hasher).unwrap();
+    (
+        format!("{:x}", HexDisplay(&hasher.sha1.finalize())),
+        format!("{:x}", HexDisplay(&hasher.sha256.finalize())),
+    )
+}
+
+/// The authenticode spec requires the hashed data of a file whose size is not
+/// a multiple of 8 to be padded with zeros to the next multiple of 8. This is
+/// the padding added before the certificate table when the file is signed.
+#[test]
+fn test_digest_unaligned_file_size() {
+    let pe = include_bytes!("testdata/tiny64.efi");
+    for extra in 1..8 {
+        let mut data = pe.to_vec();
+        data.extend((1..=extra).map(|i| i as u8));
+        let mut padded = data.clone();
+        padded.resize(data.len().next_multiple_of(8), 0);
+        assert_eq!(digest_unsigned64(&data), digest_unsigned64(&padded));
+    }
+
+    // Digest computed by osslsigncode for tiny64.efi with the bytes
+    // 1, 2, 3 appended (2051 bytes).
+    let mut data = pe.to_vec();
+    data.extend([1, 2, 3]);
+    assert_eq!(
+        digest_unsigned64(&data),
+        (
+            "051c27f3914bda5d3bb1b1c3ba4284509862543a".to_owned(),
+            "17b7398abe837540f81e53ab8c4913cc57f3c25d8ab8dcc7f9f60e22563ccd90"
+                .to_owned()
+        )
+    );
+}
+
 fn modify_image_security_data_dir<F>(f: F) -> Vec<u8>
 where
     F: FnOnce(&mut ImageDataDirectory),

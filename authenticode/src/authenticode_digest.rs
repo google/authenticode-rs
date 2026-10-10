@@ -56,7 +56,8 @@ fn authenticode_digest_impl(
         pe.data().len().checked_sub(sum_of_bytes_hashed)?;
 
     // The certificate table is not included in the hash.
-    if let Some(security_data_dir) = pe.certificate_table_range().ok()? {
+    let certificate_table_range = pe.certificate_table_range().ok()?;
+    if let Some(security_data_dir) = &certificate_table_range {
         let size =
             security_data_dir.end.checked_sub(security_data_dir.start)?;
         extra_hash_len = extra_hash_len.checked_sub(size)?;
@@ -65,6 +66,14 @@ fn authenticode_digest_impl(
     digest.update(pe.data().get(
         sum_of_bytes_hashed..sum_of_bytes_hashed.checked_add(extra_hash_len)?,
     )?);
+
+    // If the file size is not a multiple of 8, the hashed data is padded
+    // with zeros to a multiple of 8. A signed file already contains this
+    // padding before its (8-byte aligned) certificate table.
+    if certificate_table_range.is_none() {
+        let padding = 8usize.checked_sub(pe.data().len() % 8)? % 8;
+        digest.update(&[0; 7][..padding]);
+    }
 
     Some(())
 }
